@@ -1,4 +1,4 @@
-# SAR — Signed Agent Requests: design and build plan
+# SAR: Signed Agent Requests design and build plan
 
 Version 0.0.1 · 6 October 2026
 
@@ -10,7 +10,7 @@ Our recommended first build is a signing SDK, verification middleware, and a dem
 
 The problem described in the motivating post is the absence of a widely accepted way for agents to identify themselves so service providers can adjust their interfaces and policies. Our proposal supplies that identification mechanism for participating agents.
 
-A website could recognize an approved provider and serve structured content, apply a provider-specific rate limit, or direct the agent to an appropriate endpoint. If websites give identified agents useful and predictable access, legitimate agents have less reason to conceal their identity.
+A website could recognise an approved provider and serve structured content, apply a provider-specific rate limit, or direct the agent to an appropriate endpoint. If websites give identified agents useful and predictable access, legitimate agents have less reason to conceal their identity.
 
 The protocol establishes that a holder of a key endorsed by a particular provider domain signed the covered request. Recognition of that domain as a particular company comes from the website's configuration or other trusted onboarding. Signature verification alone does not establish that a specific model produced the request, that a human authorized an action, or that the agent behaves safely. Unsigned traffic can still contain both humans and agents.
 
@@ -18,7 +18,7 @@ The public/private-key principle resembles SSH authentication. For the pilot, a 
 
 ## Build on existing standards
 
-[HTTP Message Signatures RFC 9421](https://www.rfc-editor.org/rfc/rfc9421.html) defines how to sign HTTP components using `Signature-Input` and `Signature`. It supplies the serialization rules we need to avoid different interpretations of the same request.
+[HTTP Message Signatures RFC 9421](https://www.rfc-editor.org/rfc/rfc9421.html) defines how to sign HTTP components using `Signature-Input` and `Signature`. It supplies the serialisation rules we need to avoid different interpretations of the same request.
 
 The [Web Bot Auth protocol draft](https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00) applies message signatures to automated traffic, with `Signature-Agent` for key discovery and a public key directory. It is work in progress; we should pin the version we implement and track changes.
 
@@ -75,9 +75,9 @@ Use the standard signature base rather than inventing a separately signed JSON e
 
 Require the content digest for every pilot request, including the digest of empty content. Compute it from the transmitted content bytes and verify it before application processing. Do not parse and reserialize JSON to obtain those bytes. [RFC 9530](https://www.rfc-editor.org/rfc/rfc9530.html) defines `Content-Digest` and the content it covers.
 
-The first public-read pilot rejects request bodies, `Authorization`, and `Cookie` on its GET and HEAD routes. If we later support bodies, also cover relevant content metadata such as `Content-Type` and `Content-Encoding`. Before supporting requests with cookies or authorization, define coverage for those fields and any other inputs that affect the action. Provider identity does not replace the application's user authorization checks.
+The first public-read pilot rejects request bodies, `Authorization`, and `Cookie` on its GET and HEAD routes. If we later support bodies, also cover relevant content metadata such as `Content-Type` and `Content-Encoding`. Before supporting requests with cookies or authorisation, define coverage for those fields and any other inputs that affect the action. Provider identity does not replace the application's user authorisation checks.
 
-Sign only after the HTTP client has finalized the URL and headers. A redirect requires a new request and a new signature for the new destination. Browser navigation, cookies, CORS, and interception of subresource requests require a separate browser integration; a fetch wrapper is enough for the first pilot.
+Sign only after the HTTP client has finalised the URL and headers. A redirect requires a new request and a new signature for the new destination. Browser navigation, cookies, CORS, and interception of subresource requests require a separate browser integration; a fetch wrapper is enough for the first pilot.
 
 ### Freshness and replay
 
@@ -87,7 +87,7 @@ A timestamp alone allows the same signed request to be resent while valid. After
 
 For the pilot, use one region and a shared Redis store with an atomic set-if-absent operation. A per-process memory cache would allow duplicates across replicas. A future deployment across regions needs an explicit consistency design; independent regional nonce caches do not provide global replay rejection.
 
-The client generates a fresh nonce when retrying. Before adding state-changing operations, define a separate, signed idempotency key and application behavior for repeated operations. A fresh transport nonce does not prevent the same purchase or booking from being executed twice.
+The client generates a fresh nonce when retrying. Before adding state-changing operations, define a separate, signed idempotency key and application behaviour for repeated operations. A fresh transport nonce does not prevent the same purchase or booking from being executed twice.
 
 ### Website verification and policy
 
@@ -106,12 +106,12 @@ Middleware should write verified identity into server-controlled context. At a r
 | Component | First responsibility |
 | --- | --- |
 | Provider key directory | Publish the dedicated public keys and support rotation |
-| Signing SDK | Sign finalized fetch requests through a pluggable signer |
+| Signing SDK | Sign finalised fetch requests through a pluggable signer |
 | Verification middleware | Enforce the profile and expose verified identity |
 | Replay store adapter | Atomically reject reused nonces across replicas |
 | Website policy adapter | Configure provider access and rate limits |
-| Demonstration website | Show recognized traffic receiving a useful response |
-| Interoperability fixtures | Verify behavior against independently produced signatures |
+| Demonstration website | Show recognised traffic receiving a useful response |
+| Interoperability fixtures | Verify behaviour against independently produced signatures |
 
 TypeScript with Bun is the implementation stack for the SDK, middleware, and demo. Use Bun's HTTP server and Redis client, its supported `node:crypto` APIs, and tested structured-field/message-signature libraries. Redis provides the shared replay store. The protocol remains independent of this stack.
 
@@ -119,7 +119,7 @@ TypeScript with Bun is the implementation stack for the SDK, middleware, and dem
 
 ### Milestones
 
-1. **Freeze the pilot contract.** Record the draft version, required components, verification outcomes, timestamp rules, and replay behavior. Publish matching test vectors with keys explicitly marked for testing.
+1. **Freeze the pilot contract.** Record the draft version, required components, verification outcomes, timestamp rules, and replay behaviour. Publish matching test vectors with keys explicitly marked for testing.
 2. **Prove signing and verification.** Send a signed public-read request from one hosted agent to one verifier. Verify independently produced vectors so the signer and verifier cannot pass solely because they share the same bug.
 3. **Add operational controls.** Implement bounded directory caching, coordinated nonce checks, key rotation, dependency failures, and provider rate limits. Run the verifier on multiple replicas against one replay store.
 4. **Demonstrate useful access.** Give a configured provider an agent endpoint that returns the website's public catalog as structured data under a documented rate limit. Record verification outcomes and timings.
@@ -149,11 +149,11 @@ Target the September 2026 IETF draft for our reference pair. If a pilot needs Cl
 
 ## Decisions for the next iteration
 
-The initial implementation uses provider-level identity, hosted HTTP clients, configured trust anchors, direct per-request signatures, public read routes, and a shared replay store in one region. The runnable project uses Bun; see [the README](README.md) and [implemented profile](docs/protocol.md) for setup and exact supported behavior.
+The initial implementation uses provider-level identity, hosted HTTP clients, configured trust anchors, direct per-request signatures, public read routes, and a shared replay store in one region. The runnable project uses Bun; see [the README](README.md) and [implemented profile](docs/protocol.md) for setup and exact supported behaviour.
 
 The next decisions are which provider and website to pilot with, which signature library passes the required vectors, and whether the initial deployment needs Cloudflare compatibility. Browser support, session delegation, user consent, and state-changing operations should follow a demonstrated public-read flow.
 
-Provider identity is public. Log the verified provider, key identifier, verification result, policy outcome, and timings without logging private keys, raw authorization values, or request bodies. Avoid publishing a stable user identifier across websites; the provider-level pilot does not need one.
+Provider identity is public. Log the verified provider, key identifier, verification result, policy outcome, and timings without logging private keys, raw authorisation values, or request bodies. Avoid publishing a stable user identifier across websites; the provider-level pilot does not need one.
 
 ## Illustrative request shape
 

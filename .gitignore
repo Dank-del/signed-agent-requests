@@ -11,3 +11,9 @@ coverage/
 *.p12
 *.pfx
 *.der
+.venv/
+__pycache__/
+*.py[cod]
+.ruff_cache/
+*.egg-info/
+build/

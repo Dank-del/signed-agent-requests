@@ -1,0 +1,30 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sar-signed-agent-requests"
+version = "0.0.1"
+description = "SAR signing SDK for provider-signed public HTTP requests"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Sayan Biswas" }]
+dependencies = ["cryptography>=44,<51", "httpx>=0.28.1,<0.29"]
+
+[project.urls]
+Repository = "https://github.com/Dank-del/signed-agent-requests"
+
+[dependency-groups]
+dev = ["ruff>=0.16,<0.17"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sar"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

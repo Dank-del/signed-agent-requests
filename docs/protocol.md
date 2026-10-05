@@ -10,7 +10,7 @@ The signer permits only configured destination origins. The verifier resolves ke
 
 ## Signed components and metadata
 
-Exactly one signature is accepted. `Signature`, `Signature-Input`, and `Signature-Agent` must each contain exactly one dictionary member with the same label. Header values must use canonical structured-field serialization. This intentionally rejects duplicate dictionary members/parameters, extra signatures, and noncanonical encodings. The label is at most 32 characters and matches `[a-z][a-z0-9_-]*`.
+Exactly one signature is accepted. `Signature`, `Signature-Input`, and `Signature-Agent` must each contain exactly one dictionary member with the same label. Header values must use canonical structured-field serialisation. This intentionally rejects duplicate dictionary members/parameters, extra signatures, and noncanonical encodings. The label is at most 32 characters and matches `[a-z][a-z0-9_-]*`.
 
 The four required covered components are `@method`, `@target-uri`, `content-digest`, and `signature-agent;key="<label>"`. Each appears exactly once; ordering is preserved in the signature base. Other components and component parameters are rejected in this profile.
 

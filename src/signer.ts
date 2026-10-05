@@ -43,7 +43,9 @@ export function createRequestSigner(options: SignerOptions) {
         nonce: randomBytes(24).toString('base64url'), tag: 'web-bot-auth',
       },
     }, { method: request.method, url: request.url, headers: Object.fromEntries(headers) });
-    return new Request(request, { headers: signed.headers, redirect: 'manual' });
+    const result = new Request(request, { headers: signed.headers, redirect: 'manual' });
+    checkPublicRequest(result);
+    return result;
   }
 
   async function signedFetch(input: Request | string | URL, init?: RequestInit, transport: Fetcher = fetch): Promise<Response> {

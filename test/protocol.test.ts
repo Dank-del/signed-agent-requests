@@ -152,6 +152,11 @@ describe('strict request signatures', () => {
     await expect(h.signer.signRequest(new Request('https://other.example/'))).rejects.toThrow('Destination');
   });
 
+  test('rejects requests whose headers exceed bounds after signing', async () => {
+    const h = harness();
+    await expect(h.signer.signRequest(new Request(TARGET, { headers: { 'x-padding': 'x'.repeat(16_000) } }))).rejects.toThrow();
+  });
+
   test('dependency outages fail closed and do not reserve invalid signatures', async () => {
     const h = harness();
     const throwingStore: ReplayStore = { async reserve() { throw new Error('offline'); } };

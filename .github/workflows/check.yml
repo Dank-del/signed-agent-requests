@@ -7,9 +7,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       redis:
         image: redis:7.4-alpine
@@ -27,5 +31,30 @@ jobs:
           bun-version: 1.4.0
       - run: bun install --frozen-lockfile
       - run: bun run check
+        env:
+          TEST_REDIS_URL: redis://127.0.0.1:6379
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache: false
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.11.8'
+          python-version: '3.11'
+      - run: go test -race ./...
+        working-directory: sdks/go
+      - run: go vet ./...
+        working-directory: sdks/go
+      - run: uv sync --frozen
+        working-directory: sdks/python
+      - run: uv run --frozen ruff check .
+        working-directory: sdks/python
+      - run: uv run --frozen ruff format --check .
+        working-directory: sdks/python
+      - run: uv run --frozen python -m unittest discover -s tests -v
+        working-directory: sdks/python
+      - run: uv build
+        working-directory: sdks/python
+      - run: bun run check:sdks
         env:
           TEST_REDIS_URL: redis://127.0.0.1:6379

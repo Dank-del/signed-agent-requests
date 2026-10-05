@@ -1,10 +1,22 @@
-# SAR — Signed Agent Requests
+# SAR: Signed Agent Requests
 
-A Bun implementation of signed provider identity for public HTTP requests. Providers publish Ed25519 public keys. Hosted agents sign each request. Websites verify the signature, request binding, timestamps, and one-time nonce, then apply their own provider policy.
+SAR helps websites recognise agent providers through cryptographically signed HTTP requests. Providers publish Ed25519 public keys on their domains. Hosted agents sign each request. Websites verify the provider identity, request binding, timestamps, and unique nonce, then apply their own access policy.
 
-The pilot targets `draft-ietf-webbotauth-httpsig-protocol-00` and RFC 9421 with a stricter application profile. It includes a signing SDK, key-directory resolver, Bun-compatible middleware, shared Redis replay and rate-limit adapters, and an HTTPS demonstration. See [the design](design.md) and [the implemented protocol contract](docs/protocol.md).
+The project includes signing SDKs for TypeScript/Bun, Go, and Python, plus a Bun verifier with key discovery, shared Redis replay protection, provider rate limits, and an HTTPS demo. All three clients use the same signature format and are tested against the Bun verifier.
+
+The pilot builds on RFC 9421 and the pinned `draft-ietf-webbotauth-httpsig-protocol-00`, with a stricter application profile. See [the design](design.md) and [the protocol specification](docs/protocol.md).
 
 Status: experimental v0.0.1. The supported flow is provider-signed, public GET/HEAD requests from hosted clients. Independent provider interoperability and deployment-specific validation remain pilot milestones.
+
+## SDKs
+
+| Language | Supported components | Guide |
+| --- | --- | --- |
+| TypeScript/Bun | Signing, verification, key discovery, replay protection, website policy | [TypeScript SDK](sdks/typescript/README.md) |
+| Go 1.23+ | Standard-library signer and HTTP client; isolated `crypto.Signer` support | [Go SDK](sdks/go/README.md) |
+| Python 3.11+ | Signer, synchronous and asynchronous HTTPX clients; isolated signer support | [Python SDK](sdks/python/README.md) |
+
+The Go and Python SDKs generate requests for the same Bun verifier. Their guides include installation and usage examples. Package registry publication is separate from publishing this repository; Go and Python currently install directly from GitHub.
 
 ## Run the HTTPS demo
 
@@ -27,7 +39,7 @@ The client demonstrates an accepted provider request, replay rejection, a modifi
 
 Use `bun run demo:setup` to generate the keys before starting. `DEMO_DIRECTORY`, `PROVIDER_PORT`, `SITE_PORT`, `PROVIDER_RATE_LIMIT`, and `REDIS_URL` are optional configuration. Use matching directory and port values for the server and client. By default the rate limit is 60 requests per provider per minute. The automatic local Redis instance is ephemeral and is stopped when the demo exits.
 
-## Use the signer
+## Use the Bun signer
 
 ```ts
 import { createRequestSigner, signerFromPrivateKey } from './src/index.js';
@@ -43,7 +55,7 @@ const response = await signedFetch('https://shop.example/agent/catalog?category=
 
 The signer accepts a pluggable `ProviderSigner`, so a provider can isolate the signing operation from the caller. Each request gets a cryptographically random nonce and a maximum lifetime of 60 seconds. The client returns redirect responses without automatically forwarding a signature; explicitly sign a new request for an allowed redirected destination.
 
-This profile supports GET and HEAD with no content and no `Cookie` or `Authorization`. It rejects these headers explicitly. Bun 1.4's `Request.credentials` property does not reliably reflect the constructor option; the SDK does not use that metadata as an authorization boundary. This is a hosted-client pilot rather than a browser cookie or navigation integration.
+This profile supports GET and HEAD with no content and no `Cookie` or `Authorization`. It rejects these headers explicitly. Bun 1.4's `Request.credentials` property does not reliably reflect the constructor option; the SDK does not use that metadata as an authorisation boundary. This is a hosted-client pilot rather than a browser cookie or navigation integration.
 
 ## Verify and apply website policy
 
@@ -101,7 +113,25 @@ bun audit
 
 Coverage includes a published RFC 9421 Ed25519 vector, independent signing and verification, modified requests, malformed headers, algorithm downgrade, timestamp constraints, key caching and rotation, revocation, provider isolation, expired cache failure, concurrent replay across two verifier instances, atomic shared rate limits, and real HTTPS directory discovery.
 
-`bun run build` emits JavaScript and declarations under `dist/`. The project is private and is not published by these commands. `@types/node` and `@types/bun` are development dependencies.
+For the Go and Python SDKs, install Go and uv, then run:
+
+```bash
+cd sdks/go
+go test -race ./...
+go vet ./...
+cd ../python
+uv sync --frozen
+uv run --frozen ruff check .
+uv run --frozen ruff format --check .
+uv run --frozen python -m unittest discover -s tests -v
+uv build
+cd ../..
+bun run check:sdks
+```
+
+`check:sdks` installs the built TypeScript package into a separate application and checks its declarations, signing, verification, and replay handling. It also verifies Go and Python requests, including encoded paths, query ordering, empty queries, and root paths, then sends real HTTPS requests through the Bun verifier and shared Redis replay store. Shared conformance fixtures in [`fixtures/`](fixtures/) contain an explicitly public RFC test seed that must never be used for a real provider.
+
+`bun run build` emits JavaScript and declarations under `dist/`. Checks and builds do not publish packages. `@types/node` and `@types/bun` are development dependencies.
 
 ## Deployment boundaries
 
@@ -113,7 +143,7 @@ Use `resolver.denyKey(providerOrigin, keyId)` for immediate local revocation. Di
 
 Cloudflare's currently documented integration uses an older `Signature-Agent` form and does not track nonce reuse. This implementation targets the pinned dictionary draft and enforces its own strict replay profile. Cloudflare compatibility mode is not implemented; see [compatibility details](docs/protocol.md#compatibility).
 
-This is a tested implementation of the documented pilot. Deployment-specific proxy behavior, signing-key custody, Redis persistence, and independent-provider integration still need validation in the environment where it will run.
+This is a tested implementation of the documented pilot. Deployment-specific proxy behaviour, signing-key custody, Redis persistence, and independent-provider integration still need validation in the environment where it will run.
 
 ## Contributing and license
 
