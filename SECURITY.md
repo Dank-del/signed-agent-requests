@@ -1,6 +1,6 @@
 # Security policy
 
-The current `0.1.x` implementation is an experimental public-read pilot. Security fixes target the latest revision on `main`. Independent provider integration and deployment-specific validation are still required; the project has not received an independent security audit.
+The current `0.0.x` implementation is an experimental public-read pilot. Security fixes target the latest revision on `main`. Independent provider integration and deployment-specific validation are still required; the project has not received an independent security audit.
 
 ## Reporting a vulnerability
 

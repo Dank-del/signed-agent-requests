@@ -4,7 +4,7 @@ A Bun implementation of signed provider identity for public HTTP requests. Provi
 
 The pilot targets `draft-ietf-webbotauth-httpsig-protocol-00` and RFC 9421 with a stricter application profile. It includes a signing SDK, key-directory resolver, Bun-compatible middleware, shared Redis replay and rate-limit adapters, and an HTTPS demonstration. See [the design](design.md) and [the implemented protocol contract](docs/protocol.md).
 
-Status: experimental v0.1. The supported flow is provider-signed, public GET/HEAD requests from hosted clients. Independent provider interoperability and deployment-specific validation remain pilot milestones.
+Status: experimental v0.0.1. The supported flow is provider-signed, public GET/HEAD requests from hosted clients. Independent provider interoperability and deployment-specific validation remain pilot milestones.
 
 ## Run the HTTPS demo
 

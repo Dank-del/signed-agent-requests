@@ -1,6 +1,6 @@
 # SAR — Signed Agent Requests: design and build plan
 
-Version 0.1 · 6 October 2026
+Version 0.0.1 · 6 October 2026
 
 We propose a way for agent providers to identify their HTTP traffic using signed requests. Providers publish public keys on their official domains. Their agents attach a signature, creation time, expiry, and unique request identifier to each outbound request. Websites verify these locally and decide how to serve the identified traffic.
 
@@ -149,7 +149,7 @@ Target the September 2026 IETF draft for our reference pair. If a pilot needs Cl
 
 ## Decisions for the next iteration
 
-The v1 implementation uses provider-level identity, hosted HTTP clients, configured trust anchors, direct per-request signatures, public read routes, and a shared replay store in one region. The runnable project uses Bun; see [the README](README.md) and [implemented profile](docs/protocol.md) for setup and exact supported behavior.
+The initial implementation uses provider-level identity, hosted HTTP clients, configured trust anchors, direct per-request signatures, public read routes, and a shared replay store in one region. The runnable project uses Bun; see [the README](README.md) and [implemented profile](docs/protocol.md) for setup and exact supported behavior.
 
 The next decisions are which provider and website to pilot with, which signature library passes the required vectors, and whether the initial deployment needs Cloudflare compatibility. Browser support, session delegation, user consent, and state-changing operations should follow a demonstrated public-read flow.
 

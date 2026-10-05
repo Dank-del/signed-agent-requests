@@ -1,6 +1,6 @@
 # SAR protocol profile
 
-Profile `signed-agent-requests/0.1`, based on [RFC 9421](https://www.rfc-editor.org/rfc/rfc9421.html), [RFC 9530](https://www.rfc-editor.org/rfc/rfc9530.html), and [Web Bot Auth draft 00](https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00). These rules define this application's strict subset; general Web Bot Auth signatures can be valid while failing this profile.
+Package version `0.0.1` implements profile `signed-agent-requests/0.1`, based on [RFC 9421](https://www.rfc-editor.org/rfc/rfc9421.html), [RFC 9530](https://www.rfc-editor.org/rfc/rfc9530.html), and [Web Bot Auth draft 00](https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00). The package version and protocol profile identifier are versioned separately. These rules define this application's strict subset; general Web Bot Auth signatures can be valid while failing this profile.
 
 ## Requests
 
@@ -12,7 +12,7 @@ The signer permits only configured destination origins. The verifier resolves ke
 
 Exactly one signature is accepted. `Signature`, `Signature-Input`, and `Signature-Agent` must each contain exactly one dictionary member with the same label. Header values must use canonical structured-field serialization. This intentionally rejects duplicate dictionary members/parameters, extra signatures, and noncanonical encodings. The label is at most 32 characters and matches `[a-z][a-z0-9_-]*`.
 
-The four required covered components are `@method`, `@target-uri`, `content-digest`, and `signature-agent;key="<label>"`. Each appears exactly once; ordering is preserved in the signature base. Other components and component parameters are rejected in v0.1.
+The four required covered components are `@method`, `@target-uri`, `content-digest`, and `signature-agent;key="<label>"`. Each appears exactly once; ordering is preserved in the signature base. Other components and component parameters are rejected in this profile.
 
 `Signature-Agent` uses the dictionary form from the pinned draft, with a string origin and either no item parameter or `type=directory`. The origin used for attribution is the configured provider whose directory supplied the verification key.
 
