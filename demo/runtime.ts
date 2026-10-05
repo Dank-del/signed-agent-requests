@@ -85,8 +85,8 @@ export async function startDemo(options: DemoOptions) {
 }
 
 const homepage = `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Signed agent requests</title><style>body{font:17px/1.6 system-ui;max-width:780px;margin:72px auto;padding:0 24px;color:#14212b;background:#fafbfc}h1{font-size:38px;line-height:1.15}code,pre{font-family:ui-monospace,monospace;background:#edf1f4;border-radius:5px}code{padding:2px 5px}pre{padding:20px;overflow:auto}small{color:#64717d}</style>
-<small>Local HTTPS pilot</small><h1>Requests with a verifiable provider identity</h1>
+<title>SAR — Signed Agent Requests</title><style>body{font:17px/1.6 system-ui;max-width:780px;margin:72px auto;padding:0 24px;color:#14212b;background:#fafbfc}h1{font-size:38px;line-height:1.15}code,pre{font-family:ui-monospace,monospace;background:#edf1f4;border-radius:5px}code{padding:2px 5px}pre{padding:20px;overflow:auto}small{color:#64717d}</style>
+<small>SAR · Local HTTPS pilot</small><h1>Requests with a verifiable provider identity</h1>
 <p>The provider signs each request. This website verifies its public key, signature, timestamps, and unique nonce before applying an access policy.</p>
 <h2>Try the flow</h2><pre>bun run demo:request</pre><p>The client demonstrates accepted requests, tampering, expiry, replay, and unsigned traffic.</p>
 <p><code>GET /agent/catalog?category=books</code> returns structured catalog data to the approved provider. Unsigned requests receive <code>401</code>. A repeated signed request receives <code>409</code>.</p>

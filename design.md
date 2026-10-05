@@ -1,4 +1,4 @@
-# Signed agent requests design and build plan
+# SAR — Signed Agent Requests: design and build plan
 
 Version 0.1 · 6 October 2026
 

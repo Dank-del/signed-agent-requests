@@ -1,4 +1,4 @@
-# Signed agent requests
+# SAR — Signed Agent Requests
 
 A Bun implementation of signed provider identity for public HTTP requests. Providers publish Ed25519 public keys. Hosted agents sign each request. Websites verify the signature, request binding, timestamps, and one-time nonce, then apply their own provider policy.
 

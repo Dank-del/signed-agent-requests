@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "A strict Web Bot Auth profile, signer SDK, verifier, and runnable HTTPS pilot",
+  "description": "SAR (Signed Agent Requests): a strict Web Bot Auth profile, signer SDK, verifier, and Bun HTTPS pilot",
   "license": "MIT",
   "author": "Sayan Biswas",
   "engines": {

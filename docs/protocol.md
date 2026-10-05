@@ -1,4 +1,4 @@
-# Implemented signed request profile
+# SAR protocol profile
 
 Profile `signed-agent-requests/0.1`, based on [RFC 9421](https://www.rfc-editor.org/rfc/rfc9421.html), [RFC 9530](https://www.rfc-editor.org/rfc/rfc9530.html), and [Web Bot Auth draft 00](https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00). These rules define this application's strict subset; general Web Bot Auth signatures can be valid while failing this profile.
 
